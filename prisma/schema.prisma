@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Ingatlan {
+  id             Int       @id @map("_id")
+  ar             Int
+  hirdetesDatuma DateTime  @default(now())
+  kategoria_id   Int
+  kepUrl         String?
+  leiras         String?
+  tehermentes    Boolean
+  kategora       Kategora? @relation(fields: [kategoria_id], references: [id])
+
+  @@map("ingatlanok")
+}
+
+model Kategora {
+  id         Int        @id @map("_id")
+  nev        String     @unique
+  ingatlanok Ingatlan[]
+
+  @@map("kategoriak")
+}

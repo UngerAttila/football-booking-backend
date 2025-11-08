@@ -1,0 +1,20 @@
+### 6. feladat: Összes ingatlan lekérdezése
+GET http://localhost:3000/api/ingatlan
+
+### 7. feladat: Új ingatlan felvétele
+POST http://localhost:3000/api/ingatlan
+content-type: application/json
+# Request body tartalma: (A következő üres sort ne törölje ki!) 
+
+{
+   "id": 99,
+   "kategoria_id": 2,
+   "leiras": "Eladó ...", 
+   "hirdetesDatuma": "2022-03-19", 
+   "tehermentes": true,
+   "ar": 45000000,
+   "kepUrl": "https://pictures.com/apartman.jpg"
+}
+
+### 8. feladat: Egy ingatlan törlése id alapján
+DELETE http://localhost:3000/api/ingatlan/99
