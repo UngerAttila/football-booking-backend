@@ -7,23 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Ingatlan {
-  id             Int       @id @map("_id")
-  ar             Int
-  hirdetesDatuma DateTime  @default(now())
-  kategoria_id   Int
-  kepUrl         String?
-  leiras         String?
-  tehermentes    Boolean
-  kategora       Kategora? @relation(fields: [kategoria_id], references: [id])
-
-  @@map("ingatlanok")
+model Pitch {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  location     String
+  surfaceType  String
+  pricePerHour Int
+  hasLights    Boolean   @default(false)
+  isIndoor     Boolean   @default(false)
+  size         String?
+  description  String?
+  bookings     Booking[]
 }
 
-model Kategora {
-  id         Int        @id @map("_id")
-  nev        String     @unique
-  ingatlanok Ingatlan[]
+model Referee {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  experience   String?
+  pricePerGame Int
+  phone        String?
+  email        String?
+  bookings     Booking[]
+}
 
-  @@map("kategoriak")
+model Booking {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  pitchId   String   @db.ObjectId
+  refereeId String?  @db.ObjectId
+  date      DateTime
+  startTime String
+  endTime   String
+  teamName  String
+  contact   String
+  status    String   @default("confirmed")
+
+  pitch   Pitch    @relation(fields: [pitchId], references: [id])
+  referee Referee? @relation(fields: [refereeId], references: [id])
 }

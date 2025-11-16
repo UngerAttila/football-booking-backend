@@ -1,0 +1,22 @@
+[
+  {
+    "_id": { "$oid": "675ccc000000000000000001" },
+    "pitchId": "675aaa000000000000000001",
+    "refereeId": "675bbb000000000000000001",
+    "date": { "$date": "2025-01-01T18:00:00.000Z" },
+    "startTime": "18:00",
+    "endTime": "19:30",
+    "teamName": "FC Teszt",
+    "contact": "teszt@example.com"
+  },
+  {
+    "_id": { "$oid": "675ccc000000000000000002" },
+    "pitchId": "675aaa000000000000000002",
+    "refereeId": null,
+    "date": { "$date": "2025-01-02T19:00:00.000Z" },
+    "startTime": "19:00",
+    "endTime": "20:30",
+    "teamName": "Győr SE",
+    "contact": "kapcsolat@gyorse.hu"
+  }
+]

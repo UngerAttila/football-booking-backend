@@ -1,0 +1,28 @@
+[
+    {
+        "_id": {
+            "$oid": "675aaa000000000000000001"
+        },
+        "name": "Győr Városi 5v5",
+        "location": "Győr, Műfüves utca 1.",
+        "surfaceType": "műfű",
+        "pricePerHour": 8000,
+        "hasLights": true,
+        "isIndoor": false,
+        "size": "5v5",
+        "description": "Világított műfüves pálya amatőr meccsekre."
+    },
+    {
+        "_id": {
+            "$oid": "675aaa000000000000000002"
+        },
+        "name": "Bécsi 7v7",
+        "location": "Győr, Bécsi út 12.",
+        "surfaceType": "műfű",
+        "pricePerHour": 12000,
+        "hasLights": true,
+        "isIndoor": false,
+        "size": "7v7",
+        "description": "Új borítás, jó parkolás."
+    }
+]

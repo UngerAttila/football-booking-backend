@@ -1,0 +1,18 @@
+[
+  {
+    "_id": { "$oid": "675bbb000000000000000001" },
+    "name": "Kiss Péter",
+    "experience": "Megyei szintű játékvezető",
+    "pricePerGame": 10000,
+    "phone": "+36 30 123 4567",
+    "email": "kiss.peter@pelda.hu"
+  },
+  {
+    "_id": { "$oid": "675bbb000000000000000002" },
+    "name": "Nagy Lilla",
+    "experience": "Országos keret",
+    "pricePerGame": 15000,
+    "phone": "+36 20 555 1234",
+    "email": "nagy.lilla@pelda.hu"
+  }
+]
