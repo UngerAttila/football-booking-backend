@@ -1,119 +1,128 @@
-Amatőr focipálya és játékvezető foglaló rendszer
+# Football Booking – Backend (Next.js + Prisma + MongoDB)
 
-Node.js LTS + npm
-– Ajánlott: Node 18/20 LTS (npm együtt jön).
-– Ellenőrzés: node -v, npm -v.
+REST-szerű API amatőr focipálya- és játékvezető-foglalásokhoz.  
+Tech: **Next.js App Router**, **Prisma (MongoDB adapter)**, **MongoDB (replica set)**.
 
-MongoDB Community 8.x (helyi szerver)
-– Telepítés Windows/Mac/Linuxra a hivatalos telepítővel.
-– Fontos: Prisma miatt replika-szett módban kell futnia!
-– Hasznos: MongoDB Compass (GUI) a gyors ellenőrzéshez.
+---
 
-mongosh (MongoDB Shell)
-– Újabban külön csomag, Compassból is megnyitható beépítve.
+## ✅ Előfeltételek
 
-Első indítás – lépésről lépésre
-0) Repo klónozás
+- **Node.js LTS** (18 vagy 20) + npm  
+  Ellenőrzés: `node -v` és `npm -v`
+- **MongoDB Community 8.x** (helyi szerver)
+- **mongosh** (MongoDB Shell) – vagy használhatod a **MongoDB Compass** beépített shelljét
+
+> Prisma íráshoz **replika szett** szükséges!
+
+---
+
+## 🚀 Gyors indítás (lokálisan)
+
+# 1) Repo klónozás
 git clone https://github.com/UngerAttila/football-booking-backend.git
 cd football-booking-backend
 
-1) Környezeti változók
+# 2) Környezeti változók
+#   Hozz létre .env fájlt a projekt gyökerébe a következő tartalommal:
+#   (replicaSet=rs0 KÖTELEZŐ!)
+# ---------------------------------
+# .env
+# DATABASE_URL="mongodb://127.0.0.1:27017/footballBookingDB?replicaSet=rs0"
+# ---------------------------------
 
-Hozzon létre .env fájlt a projekt gyökerébe (a te beállításoddal kompatibilis):
+# 3) MongoDB indítása REPLICA SET módban és inicializálás
+#   Válaszd az OS-edet (lentebb részletes leírás).
 
-DATABASE_URL="mongodb://127.0.0.1:27017/footballBookingDB?replicaSet=rs0"
-
-
-Ha más host/port, itt módosítja.
-
-2) MongoDB indítása replikaszettként (első alkalom)
-Windows (PowerShell, rendszergazda):
-# adatkönyvtár
-mkdir C:\data\db -ea 0
-
-# mongod indítása RS módban – az ablak maradjon nyitva!
-& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --dbpath C:\data\db --replSet rs0 --bind_ip 127.0.0.1 --port 27017
-
-
-Nyiss másik (admin) PowerShellt és inicializáld a replikasettet (mongosh vagy Compass beépített shell):
-
-# ha van külön mongosh:
-& "C:\Program Files\MongoDB\mongosh\bin\mongosh.exe" --host 127.0.0.1 --port 27017
-# shellben:
-rs.initiate({ _id: "rs0", members: [ { _id: 0, host: "127.0.0.1:27017" } ] })
-rs.status()
-
-macOS / Linux (példa)
-mkdir -p ~/data/db
-mongod --dbpath ~/data/db --replSet rs0 --bind_ip 127.0.0.1 --port 27017
-# új terminál:
-mongosh --host 127.0.0.1 --port 27017
-rs.initiate({ _id: "rs0", members: [ { _id: 0, host: "127.0.0.1:27017" } ] })
-
-
-Sikeres, ha rs.status() PRIMARY-t mutat.
-
-3) Függőségek + Prisma
+# 4) Függőségek + Prisma
 npm install
 npx prisma db push
 npx prisma generate
 
-4) (Opcionális) Tesztadatok betöltése
+# 5) (Opcionális) tesztadatok betöltése
+#   lásd: "🧪 Seed (tesztadatok)" szekció
 
-A repóban lévő data/ mappát adtad—ha ott van a pitches.json / referees.json / bookings.json és a mongo-football.bat, akkor Windows-on elég:
-
-npm run seed:local
-
-
-Vagy kézzel (mongoimport):
-
-mongoimport --uri="mongodb://127.0.0.1:27017" --db="footballBookingDB" --collection="Pitch"   --drop --file="data/pitches.json"   --jsonArray
-mongoimport --uri="mongodb://127.0.0.1:27017" --db="footballBookingDB" --collection="Referee" --drop --file="data/referees.json" --jsonArray
-mongoimport --uri="mongodb://127.0.0.1:27017" --db="footballBookingDB" --collection="Booking" --drop --file="data/bookings.json" --jsonArray
-
-5) Backend indítása
+# 6) Szerver indítása
 npm run dev
+# → http://localhost:3001
 
 
-Várt kimenet: pl. http://localhost:3001
+API alap adatok
 
-Gyors teszt (Postman / böngésző)
+Alap URL: http://localhost:3001
 
-Pitches
-GET http://localhost:3001/api/pitches
-POST http://localhost:3001/api/pitches (Body JSON)
-DELETE http://localhost:3001/api/pitches?id=<id>
+Pályák (pitches):
 
-Referees
-GET http://localhost:3001/api/referees
-POST http://localhost:3001/api/referees
-DELETE http://localhost:3001/api/referees?id=<id>
+GET /api/pitches
 
-Bookings
-GET http://localhost:3001/api/bookings
-POST http://localhost:3001/api/bookings
-DELETE http://localhost:3001/api/bookings?id=<id>
+POST /api/pitches (JSON body)
 
-POST-nál Content-Type: application/json, a mintákat már összeraktuk.
+DELETE /api/pitches?id=<id>
 
-Hasznos megjegyzések
+Játékvezetők (referees):
 
-Replika-szett kötelező (különben Prisma írásnál hibázik/timeoutol).
+GET /api/referees
 
-Compass: ha RS init előtt akarna csatlakozni, hasznos a mongodb://127.0.0.1:27017/?directConnection=true. RS után elhagyható.
+POST /api/referees
 
-Portok: backend 3001, Mongo 27017 (lokál).
+DELETE /api/referees?id=<id>
 
-CORS: a backend route-okban engedélyezve a http://localhost:8080 (frontend). Ha más porton fut a front, állítsa át a CORS headereket.
+Foglalások (bookings):
 
-.env gitignore: .env ne kerüljön fel (repóban legyen .gitignore).
+GET /api/bookings
 
-Node verzió: ha bármi furcsa, egyeztesse a Node LTS verziót (18/20), törölje a node_modules + package-lock.json és npm install.
+POST /api/bookings
 
-Gyors hibaelhárítás
+DELETE /api/bookings?id=<id>
 
-POST 500 + „transactions/replica set” → nincs RS: indítsa --replSet rs0-val és futtassa rs.initiate(...).
 
-Server selection timeout → a mongod nem fut / nem 127.0.0.1/27017 / tűzfal blokkol.
+Minták (POST body):
+// POST /api/pitches
+{
+  "name": "Buda 5v5",
+  "location": "Budapest, Példa utca 10.",
+  "surfaceType": "műfű",
+  "pricePerHour": 9000,
+  "hasLights": true,
+  "isIndoor": false,
+  "size": "5v5",
+  "description": "Jó világítás, jó parkolás."
+}
+// POST /api/referees
+{
+  "name": "Kiss Péter",
+  "experience": "Megyei szintű játékvezető",
+  "pricePerGame": 10000,
+  "phone": "+36 30 123 4567",
+  "email": "kiss.peter@pelda.hu"
+}
+// POST /api/bookings  (refereeId lehet null)
+{
+  "pitchId": "<PITCH_ID>",
+  "refereeId": null,
+  "date": "2025-01-01",
+  "startTime": "18:00",
+  "endTime": "19:30",
+  "teamName": "FC Teszt",
+  "contact": "teszt@example.com"
+}
+MongoDB – Replica Set indítás
 
-Invalid featureCompatibilityVersion → régi adatkönyvtár; törölje/ürítse a C:\data\db-t (devben), indítsa újra és rs.initiate.
+Ha a MongoDB még nem fut RS módban, egyszer inicializálni kell.
+# 1) Adatkönyvtár
+mkdir C:\data\db -ea 0
+
+# 2) mongod indítása REPLICA SET módban (hagyd nyitva ezt az ablakot!)
+& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --dbpath C:\data\db --replSet rs0 --bind_ip 127.0.0.1 --port 27017
+
+# 3) Replika init (külön ablakban)
+# Használhatsz külön mongosh-t vagy a MongoDB Compass beépített shelljét.
+
+# 3/A) mongosh (ha telepítve van)
+& "C:\Program Files\MongoDB\mongosh\bin\mongosh.exe" --host 127.0.0.1 --port 27017
+
+# 3/B) Compass: csatlakozz "mongodb://127.0.0.1:27017/?directConnection=true"
+#   → jobb felső sarok: Open MongoDB Shell
+
+# a shellben:
+rs.initiate({ _id: "rs0", members: [ { _id: 0, host: "127.0.0.1:27017" } ] })
+rs.status()  // pár másodperc és PRIMARY lesz
